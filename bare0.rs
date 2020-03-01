@@ -18,6 +18,7 @@
 // Panic handler, for textual output using semihosting
 use panic_semihosting as _;
 
+
 // import entry point
 use cortex_m_rt::entry;
 
@@ -37,13 +38,13 @@ fn main() -> ! {
 
     loop {
 
-        x += 1; // <- place breakpoint here (3)
+        x =x.wrapping_add(1); // <- place breakpoint here (3)
         unsafe {
-            X += 1;
+            X += X;
             Y = X;
 
-           // let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
-           // let _ = core::ptr::read_volatile(&X);
+        let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
+        let _ = core::ptr::read_volatile(&X);
             
             assert!(x == X && X == Y);
         }
@@ -85,11 +86,15 @@ fn main() -> ! {
 //
 //    Commit your answers (bare0_1)
 //
+//_______________________________________________________________________________________________
 // 2. Alter the constant X_INIT so that `x += 1` directly causes `x` to wrap.
 // 	  What happens when `x` wraps
 //    (Hint, look under OUTPUT/Adopter Output to see the `openocd` output.)
 //
 //    ** your answer here **
+//      It !panics due: rust_begin_unwind (info=0x20007fd0)
+//      panicked at 'assertion failed: x == X && X == Y'
+//      It will say x != X
 //
 //    Commit your answers (bare0_2)
 //
