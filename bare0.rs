@@ -46,7 +46,7 @@ fn main() -> ! {
         let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
         let _ = core::ptr::read_volatile(&X);
             
-            assert!(x == X && X == Y);
+            assert!(x == X && X == Y + 1);
         }
     }
 }
@@ -121,9 +121,13 @@ fn main() -> ! {
 // 4. Change the assertion to `assert!(x == X && X == Y + 1)`, what happens?
 //
 //    ** place your answer here **
+//      It panicked at 'assertion failed: x == X && X == Y + 1'
+//      Because (X != Y+1) while (X = Y)
+//
 //
 //    Commit your answers (bare0_4)
 //
+//_______________________________________________________________________________________________
 // 5. Remove the assertion and implement "safe" functions for
 //    reading and writing X and Y
 //    e.g. read_x, read_y, write_x, write_y
