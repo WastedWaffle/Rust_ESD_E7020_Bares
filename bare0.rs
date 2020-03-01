@@ -24,7 +24,7 @@ use cortex_m_rt::entry;
 
 // a constant (cannot be changed at run-time)
 
-const X_INIT: u32 = 10;
+const X_INIT: u32 = 100000000;
 // const X_INIT: u32 = core::u32::MAX;
 
 // global mutable variables (changed using unsafe code)
@@ -38,9 +38,9 @@ fn main() -> ! {
 
     loop {
 
-        x =x.wrapping_add(1); // <- place breakpoint here (3)
+        x =x.wrapping_add(1000000); // <- place breakpoint here (3)
         unsafe {
-            X += X;
+            X = X.wrapping_add(1000000);
             Y = X;
 
         let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
@@ -98,14 +98,19 @@ fn main() -> ! {
 //
 //    Commit your answers (bare0_2)
 //
+//_______________________________________________________________________________________________
 // 3. Place a breakpoint at `x += 1`
 //
 //    Change (both) += operations to use wrapping_add
 //    load and run the program, what happens
 //    ** your answer here **
+//      the variables wraps around now without any !panics
+//
 //
 //    Now continue execution, what happens
 //    ** your answer here **
+//      It will be an infinit loop i.e. the program will continue to run forever.
+//
 //
 //    Commit your answers (bare0_3)
 //
