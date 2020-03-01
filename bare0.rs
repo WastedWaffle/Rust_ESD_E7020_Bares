@@ -24,7 +24,7 @@ use cortex_m_rt::entry;
 
 // a constant (cannot be changed at run-time)
 
-const X_INIT: u32 = 100000000;
+const X_INIT: u32 = 10;
 // const X_INIT: u32 = core::u32::MAX;
 
 // global mutable variables (changed using unsafe code)
@@ -38,9 +38,9 @@ fn main() -> ! {
 
     loop {
 
-        x =x.wrapping_add(1000000); // <- place breakpoint here (3)
+        x =x.wrapping_add(1); // <- place breakpoint here (3)
         unsafe {
-            X = X.wrapping_add(1000000);
+            X = X.wrapping_add(1);
             Y = X;
 
         let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
@@ -104,7 +104,7 @@ fn main() -> ! {
 //    Change (both) += operations to use wrapping_add
 //    load and run the program, what happens
 //    ** your answer here **
-//      the variables wraps around now without any !panics
+//      the variables wraps around now without any !panics. It comes back to the breakpoint
 //
 //
 //    Now continue execution, what happens
@@ -117,6 +117,7 @@ fn main() -> ! {
 //    (If the program did not succeed back to the breakpoint
 //    you have some fault in the program and go back to 3.)
 //
+//_______________________________________________________________________________________________
 // 4. Change the assertion to `assert!(x == X && X == Y + 1)`, what happens?
 //
 //    ** place your answer here **
