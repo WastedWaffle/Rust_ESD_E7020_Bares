@@ -31,38 +31,33 @@ const X_INIT: u32 = 10;
 static mut X: u32 = X_INIT;
 static mut Y: u32 = 0;
 
-fn read_x() -> u32 {
-    unsafe { X }
+fn write_u32(v: &mut u32, x:u32){
+    unsafe{
+        *v = x  
+    }
 }
 
-fn read_y() -> u32 {
-    unsafe { Y }
-}
-
-fn write_x(x: u32){
-    unsafe{X=x}
-}
-
-fn write_y(y: u32){
-    unsafe{Y=y}
+fn read_u32(v:&u32)-> u32{
+    unsafe{*v}
 }
 
 #[entry]
 fn main() -> ! {
     // local mutable variable (changed in safe code)
-    let mut x = read_x();
 
-    loop {
+        let mut x = read_u32(&X);
 
-        x =x.wrapping_add(1); // <- place breakpoint here (3)
-        
-        write_x(read_x().wrapping_add(1));
-        write_y(read_x());
+        loop {
 
-        //let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
-        //let _ = core::ptr::read_volatile(&X);
+            x =x.wrapping_add(1); // <- place breakpoint here (3)
             
-            assert!(x == read_x() && read_x() == read_y());
+            write_u32(&mut X, read_u32(&X).wrapping_add(1));
+            write_u32(&mut Y, read_u32(&X));
+            
+            
+            assert!(x == read_u32(&X) && read_u32(&X) == read_u32(&Y));
+        
+        
         
     }
 }
@@ -161,4 +156,5 @@ fn main() -> ! {
 //    Rewrite the program to use this abstraction instead of "read_x", etc.
 //
 //    Commit your solution (bare0_6)
-//
+//    
+//_______________________________________________________________________________________________
