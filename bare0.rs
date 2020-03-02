@@ -32,19 +32,17 @@ static mut X: u32 = X_INIT;
 static mut Y: u32 = 0;
 
 fn write_u32(v: &mut u32, x:u32){
-    unsafe{
         *v = x  
-    }
 }
 
 fn read_u32(v:&u32)-> u32{
-    unsafe{*v}
+    *v
 }
 
 #[entry]
 fn main() -> ! {
     // local mutable variable (changed in safe code)
-
+    unsafe{
         let mut x = read_u32(&X);
 
         loop {
@@ -54,10 +52,9 @@ fn main() -> ! {
             write_u32(&mut X, read_u32(&X).wrapping_add(1));
             write_u32(&mut Y, read_u32(&X));
             
-            
             assert!(x == read_u32(&X) && read_u32(&X) == read_u32(&Y));
         
-        
+        }
         
     }
 }
@@ -156,5 +153,7 @@ fn main() -> ! {
 //    Rewrite the program to use this abstraction instead of "read_x", etc.
 //
 //    Commit your solution (bare0_6)
-//    
+//      the problem here is when I use unsafe block internal in the read_u32 & write_u32 it complain that
+//      I need a unsafe block to operate with satic mute variables in the loop.
+//      It allso says it's unnecessary to use unsafe block inside the read & write fnc
 //_______________________________________________________________________________________________
