@@ -31,23 +31,39 @@ const X_INIT: u32 = 10;
 static mut X: u32 = X_INIT;
 static mut Y: u32 = 0;
 
+fn read_x() -> u32 {
+    unsafe { X }
+}
+
+fn read_y() -> u32 {
+    unsafe { Y }
+}
+
+fn write_x(x: u32){
+    unsafe{X=x}
+}
+
+fn write_y(y: u32){
+    unsafe{Y=y}
+}
+
 #[entry]
 fn main() -> ! {
     // local mutable variable (changed in safe code)
-    let mut x = unsafe { X };
+    let mut x = read_x();
 
     loop {
 
         x =x.wrapping_add(1); // <- place breakpoint here (3)
-        unsafe {
-            X = X.wrapping_add(1);
-            Y = X;
+        
+        write_x(read_x().wrapping_add(1));
+        write_y(read_x());
 
-        let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
-        let _ = core::ptr::read_volatile(&X);
+        //let _ = core::ptr::read_volatile(&Y); // needs this to read the variable Y 
+        //let _ = core::ptr::read_volatile(&X);
             
-            assert!(x == X && X == Y + 1);
-        }
+            assert!(x == read_x() && read_x() == read_y());
+        
     }
 }
 
@@ -137,6 +153,7 @@ fn main() -> ! {
 //
 //    Commit your solution (bare0_5)
 //
+//_______________________________________________________________________________________________
 // 6. *Optional
 //    Implement a read_u32/write_u32, taking a reference to a
 //    "static" variable
