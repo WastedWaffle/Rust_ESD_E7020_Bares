@@ -3,21 +3,17 @@
 #![no_main]
 #![no_std]
 
-//extern crate panic_halt;
+extern crate panic_halt;
 extern crate cortex_m;
-extern crate stm32f4xx_hal as hal;
 
-use crate::hal::prelude::*;
-use crate::hal::pac;
-use crate::hal::pwm;
-use crate::hal::rcc::Config;
-
-use panic_halt as _;
 use cortex_m::asm;
 use cortex_m_rt::entry;
-use stm32l0::stm32l0x2;
-//use stm32l0xx_hal::{pac, prelude::*, pwm, rcc::Config};
-
+use stm32l0xx_hal::{
+    pac,
+    prelude::*,
+    pwm,
+    rcc::Config,
+};
 
 fn wait(i: u32) {
     for _ in 0..i {
@@ -37,7 +33,7 @@ fn main() -> ! {
 
     // Acquire the GPIOA peripheral. This also enables the clock for GPIOA in
     // the RCC register.
-    let gpioa = dp.GPIOA.split(&mut rcc);
+    let gpiob = dp.GPIOB.split(&mut rcc);
 
     // Initialize TIM2 for PWM
     let pwm = pwm::Timer::new(dp.TIM2, 4.khz(), &mut rcc);
