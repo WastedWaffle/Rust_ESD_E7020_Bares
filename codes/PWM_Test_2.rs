@@ -3,21 +3,16 @@
 #![no_main]
 #![no_std]
 
-extern crate panic_halt;
+//extern crate panic_halt;
 extern crate cortex_m;
 
+use panic_halt as _;	
 use cortex_m::asm;
 use cortex_m_rt::entry;
-use cast::{u16, u32};
-use stm32l0xx_hal::{
-    pac,
-    prelude::*,
-    pwm,
-    rcc::Config,
-    gpio::gpiob::{PB2},
-    time::Hertz,
-    
-};
+use stm32l0::stm32l0x2;
+//use stm32l0xx_hal::{pac, prelude::*, pwm, rcc::Config};
+use stm32l0xx_hal as _;
+
 
 fn wait(i: u32) {
     for _ in 0..i {
