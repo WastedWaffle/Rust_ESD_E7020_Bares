@@ -5,13 +5,18 @@
 
 //extern crate panic_halt;
 extern crate cortex_m;
+extern crate stm32f4xx_hal as hal;
 
-use panic_halt as _;	
+use crate::hal::prelude::*;
+use crate::hal::pac;
+use crate::hal::pwm;
+use crate::hal::rcc::Config;
+
+use panic_halt as _;
 use cortex_m::asm;
 use cortex_m_rt::entry;
 use stm32l0::stm32l0x2;
 //use stm32l0xx_hal::{pac, prelude::*, pwm, rcc::Config};
-use stm32l0xx_hal as _;
 
 
 fn wait(i: u32) {
