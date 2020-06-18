@@ -65,7 +65,9 @@ fn main() -> ! {
 //    What is the `ITM` output.
 //
 //    ** your answer here **
+//      panicked at 'attempt to add with overflow', examples/bare1.rs:23:9
 //
+//________________________________________________________________________________________
 //    Commit your answer (bare1_1)
 //
 // 2. Inspecting the generated assembly code.
