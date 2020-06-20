@@ -41,9 +41,7 @@ fn main() -> ! {
 
     let mut a = [0u8; 4];
 
-    for i in 0usize..s.len() {
-        a[i]=bs[i]
-    }
+    a.clone_from_slice(&bs);
 
     hprintln!("").unwrap();
     hprintln!("a = {}", core::str::from_utf8(&a).unwrap()).unwrap();
