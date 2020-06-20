@@ -40,7 +40,7 @@ fn main() -> ! {
     hprintln!("").unwrap();
 
     let a = [65u8; 4];
-    // let mut a = [0u8; 4];
+    let mut a = [0u8; 4];
 
     hprintln!("").unwrap();
     hprintln!("a = {}", core::str::from_utf8(&a).unwrap()).unwrap();
@@ -107,6 +107,9 @@ fn main() -> ! {
 //    Run the program, what happens and why?
 //
 //    ** your answer here **
+//      by inserting let mut a = [0u8; 4] 'a' becomes a list of 4 zeroes.
+//      as Dec/Hx/Oct value of zero stands for char value NUL/null in ascii table the output 
+//      now   is 'a=    '
 //
 //    Commit your answers (bare3_3)
 //
