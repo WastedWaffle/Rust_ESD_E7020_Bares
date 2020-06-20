@@ -36,8 +36,8 @@ use address::*;
 
 #[inline(always)]
 fn read_u32(addr: u32) -> u32 {
-    //unsafe { core::ptr::read_volatile(addr as *const _) }
-    core::ptr::read_volatile(addr as *const _)
+    unsafe { core::ptr::read_volatile(addr as *const _) }
+    //core::ptr::read_volatile(addr as *const _)
 }
 
 #[inline(always)]
@@ -103,11 +103,17 @@ fn main() -> ! {
 //    What was the error message and explain why.
 //
 //    ** your answer here **
+//      error[E0133]: call to unsafe function is unsafe and requires unsafe function or block
+//      read_volatile is an unsafe fcn and therefore it is needed to be called in an unsafe block.
+//      as it was done before the change.
 //
 //    Digging a bit deeper, why do you think `read_volatile` is declared `unsafe`.
 //    (https://doc.rust-lang.org/core/ptr/fn.read_volatile.html, for some food for thought )
 //
 //    ** your answer here **
+//      this function is unsafe because it semantically moves the value out of src 
+//      without preventing anymore usage of src. usage of a unsafe block provides to ensure that the 
+//      value at src is not used untill the data is overwriten again.
 //
 //    Commit your answers (bare4_2)
 //
@@ -121,15 +127,31 @@ fn main() -> ! {
 //    Why is it important that ordering of volatile operations are ensured by the compiler?
 //
 //    ** your answer here **
+//      because it could result in changes in values and states while we read or write from the memory 
+//      in the code and it can lead to behavior that is not intended.
 //
 //    Give an example in the above code, where reordering might make things go horribly wrong
 //    (hint, accessing a peripheral not being powered...)
 //
 //    ** your answer here **
+//      // power on GPIOA
+//      let r = read_u32(RCC_AHB1ENR); // read
+//      write_u32(RCC_AHB1ENR, r | 1); // set enable
+//      this is a clear example where the order of the first read and write matters.
+//      if we change the order the program will crash due to the variable 'r' has wrong/no value.
+//      to be sure I made that change and it did results in error as I expected.
+//error[E0425]: cannot find value `r` in this scope
+//  --> examples/bare4.rs:59:28
+//   |
+//59 |     write_u32(RCC_AHB1ENR, r | 1); // set enable
+//   |                            ^ not found in this scope
 //
 //    Without the non-reordering property of `write_volatile/read_volatile` could that happen in theory
 //    (argue from the point of data dependencies).
 //
 //    ** your answer here **
-//
+//      in case of bitwise operations on data from memory and a input signal, if the value changes while it 
+//      is still reading from memory might make things go wrong.
+//      for example if we are configuring a peripheral and we read from the memory, and the value in the 
+//      memory changes while bitwise operations goes on the configuration will be wrong.
 //    Commit your answers (bare4_3)
