@@ -18,19 +18,22 @@ use cortex_m_semihosting::{hprint, hprintln};
 #[entry]
 fn main() -> ! {
     hprintln!("bare3").unwrap();
-    let s = "ABCD";
-    let bs = s.as_bytes();
+    //let s = "ABCD";
+    let s: &str = "ABCD";
+    //let bs = s.as_bytes();
+    let bs: &[u8] = s.as_bytes();
 
     hprintln!("s = {}", s).unwrap();
     hprintln!("bs = {:?}", bs).unwrap();
 
     hprintln!("iterate over slice").unwrap();
     for c in bs {
-        hprint!("{},", c).unwrap();
+        
+        hprint!("{},", c as &u8).unwrap();
     }
 
     hprintln!("iterate iterate using (raw) indexing").unwrap();
-    for i in 0..s.len() {
+    for i in 0usize..s.len() {
         hprintln!("{},", bs[i]).unwrap();
     }
 
