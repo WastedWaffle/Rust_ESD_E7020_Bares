@@ -39,8 +39,11 @@ fn main() -> ! {
 
     hprintln!("").unwrap();
 
-    let a = [65u8; 4];
     let mut a = [0u8; 4];
+
+    for i in 0usize..s.len() {
+        a[i]=bs[i]
+    }
 
     hprintln!("").unwrap();
     hprintln!("a = {}", core::str::from_utf8(&a).unwrap()).unwrap();
