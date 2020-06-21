@@ -188,20 +188,20 @@ fn idle(rcc: &mut RCC, gpioa: &mut GPIOA) {
 
     loop {
         // set PA5 high
-        gpioa.BSRRH.write(1 << 5); // set bit, output hight (turn on led)
+        //gpioa.BSRRH.write(1 << 5); // set bit, output hight (turn on led)
 
         // alternatively to set the bit high we can
         // read the value, or with PA5 (bit 5) and write back
-        //gpioa.ODR.write(gpioa.ODR.read() | (1 << 5));
+        gpioa.ODR.write(gpioa.ODR.read() | (1 << 5));
 
         wait(10_000);
 
         // set PA5 low
-        gpioa.BSRRL.write(1 << 5); // clear bit, output low (turn off led)
+        //gpioa.BSRRL.write(1 << 5); // clear bit, output low (turn off led)
 
         // alternatively to clear the bit we can
         // read the value, mask out PA5 (bit 5) and write back
-        //gpioa.ODR.write(gpioa.ODR.read() & !(1 << 5));
+        gpioa.ODR.write(gpioa.ODR.read() & !(1 << 5));
         wait(10_000);
     }
 }
@@ -226,7 +226,7 @@ fn idle(rcc: &mut RCC, gpioa: &mut GPIOA) {
 //    (They should have the same behavior, but is a bit less efficient.)
 //
 //    Run and see that the program behaves the same.
-//
+//      yes, it behaves the same
 //    Commit your answers (bare5_1)
 //
 // 2. Extend the read/write API with a `modify` for u32, taking the
