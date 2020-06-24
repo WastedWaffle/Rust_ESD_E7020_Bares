@@ -13,6 +13,7 @@ extern crate panic_halt;
 
 extern crate cortex_m;
 use cortex_m_rt::entry;
+//use cortex_m_semihosting::hprintln;
 
 // C like API...
 mod stm32f40x {
@@ -57,12 +58,15 @@ mod stm32f40x {
     // width  (field width)
     // value  (new value that the field should take)
     //
-    // impl VolatileCell<u32> {
-    //     #[inline(always)]
-    //     pub fn modify(&self, offset: u8, width: u8, value: u32) {
-    //         // your code here
-    //     }
-    // }
+    impl VolatileCell<u32> {
+        #[inline(always)]
+        pub fn modify(&self, offset: u8, width: u8, value: u32) {
+            let m = (1 << width) - 1; //configurate the mask
+            let r = self.read() & !(m << offset); //read and mask
+            
+            self.write(r | (value & m) << offset); // sets the masked value
+        }
+    }
 
     #[repr(C)]
     #[allow(non_snake_case)]
@@ -141,27 +145,30 @@ fn wait(i: u32) {
 }
 
 // simple test of Your `modify`
-//fn test() {
-// let t:VolatileCell<u32> = unsafe {  core::mem::uninitialized() };
-// t.write(0);
-// assert!(t.read() == 0);
-// t.modify(3, 3, 0b10101);
-// //
-// //     10101
-// //    ..0111000
-// //    ---------
-// //    000101000
-// assert!(t.read() == 0b101 << 3);
-// t.modify(4, 3, 0b10001);
-// //    000101000
-// //      111
-// //      001
-// //    000011000
-// assert!(t.read() == 0b011 << 3);
+fn test() {
+    let t:VolatileCell<u32> = unsafe {  core::mem::uninitialized() };
+    t.write(0);
+    assert!(t.read() == 0);
+    t.modify(3, 3, 0b10101);
 
-// if << is used, your code will panic in dev (debug), but not in release mode
-// t.modify(32, 3, 1);
-//}
+ //   hprintln!("{}", t.read()).unwrap();
+ //   hprintln!("{}", 0b101 << 3);
+ //
+ //     10101
+ //    ..0111000
+ //    ---------
+ //    000101000
+    assert!(t.read() == 0b101 << 3);
+    t.modify(4, 3, 0b10001);
+ //    000101000
+ //      111
+ //      001
+ //    000011000
+    assert!(t.read() == 0b011 << 3);
+
+ // if << is used, your code will panic in dev (debug), but not in release mode
+    t.modify(32, 3, 1);
+}
 
 // system startup, can be hidden from the user
 #[entry]
@@ -169,7 +176,7 @@ fn main() -> ! {
     let rcc = unsafe { &mut *RCC::get() }; // get the reference to RCC in memory
     let gpioa = unsafe { &mut *GPIOA::get() }; // get the reference to GPIOA in memory
 
-    // test(); // uncomment to run test
+    test(); // uncomment to run test
     idle(rcc, gpioa);
     loop {
         continue;
@@ -192,17 +199,21 @@ fn idle(rcc: &mut RCC, gpioa: &mut GPIOA) {
 
         // alternatively to set the bit high we can
         // read the value, or with PA5 (bit 5) and write back
-        gpioa.ODR.write(gpioa.ODR.read() | (1 << 5));
-
-        wait(10_000);
+        // gpioa.ODR.write(gpioa.ODR.read() | (1 << 5));
+        gpioa.ODR.modify(5, 1, 1); //sets the value to 1, ON!
+        // hprintln!("ON!!").unwrap();
+        wait(1000_000);
 
         // set PA5 low
         //gpioa.BSRRL.write(1 << 5); // clear bit, output low (turn off led)
 
         // alternatively to clear the bit we can
         // read the value, mask out PA5 (bit 5) and write back
-        gpioa.ODR.write(gpioa.ODR.read() & !(1 << 5));
-        wait(10_000);
+        // gpioa.ODR.write(gpioa.ODR.read() & !(1 << 5));
+        gpioa.ODR.modify(5, 1, 0); //sets the value to 0, OFF!
+        // hprintln!("OFF!").unwrap();
+        wait(1000_000); // something wierd happends here! this loop going around 100 time faster after the
+                        //modification. I have been trying to understand but I dont get it.
     }
 }
 
